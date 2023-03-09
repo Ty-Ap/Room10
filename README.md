@@ -33,8 +33,8 @@ A game that can be played completely in the CLI leveraging WebSocket to enable m
 
 #### UML
 
-![Room 10 UML](../room-10/assets/room-10-uml.png)
+![Room 10 UML](./assets/room-10-uml.png)
 
 #### Database Schema
 
-![Schema Design](../room-10/assets/room-10-schema.png)
+![Schema Design](./assets/room-10-schema.png)
