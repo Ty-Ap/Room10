@@ -14,7 +14,7 @@ A game that can be played completely in the CLI leveraging WebSocket to enable m
 <!-- - [back-end server deployed]() -->
 - [Project Management Board](https://trello.com/b/KYO7ODfy/development-for-room-10)
 
-![User Stories](../room-10/Screenshot%202023-03-10%20175342.png)
+![User Stories](./assets/Screenshot%202023-03-10%20175342.png)
 
 ### Setup
 
