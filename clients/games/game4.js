@@ -16,7 +16,7 @@ let dealerHand = [];
 let playerHand = [];
 let dealerScore = 0;
 let playerScore = 0;
-let playersTurn = true
+let playersTurn = true;
 let gameOver = null;
 let winner = null;
 
@@ -40,6 +40,10 @@ function game4(socket) {
   while (playersTurn) {
    await playersChoice(socket);
   }
+  while (!gameOver) {
+    await dealersChoice(socket);
+  }
+
   if (gameOver) {
     if (!winner) {
       setTimeout(() => {
@@ -70,26 +74,21 @@ function addCard(hand) {
 
 async function blackjackOrBust(socket) {
   if (playerScore > 21) {
-    console.log('Sorry you lose');
-    console.log('Please try again');
-    playersTurn = false;
-    gameOver = true
+    for (let card of playerHand) {
+      if (card.card === 'Ace' && card.value === 11) {
+        card.value = 1;
+        playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
+        break;
+      }
+    } if (playerScore > 21) loseGame();
   } else if (playerScore === 21 && playerHand.length === 2) {
     console.log('BLACKJACK!');
     playersTurn = false;
     gameOver = true
-    winner = true
-    let { hasWon } = await prompt({
-      type: 'Select',
-      name: 'hasWon',
-      message: 'Press Enter when you\'re ready to advance',
-      choices: ['Ready']
-    })
-    if (hasWon) {
-      socket.emit('answer1', 'winner', 'winner');
-    }
+    winGame(socket);
   } else if (playerScore === 21) {
     console.log('21! Now let\'s see if the dealer can match');
+    playersTurn = false;
   }
 }
 
@@ -121,18 +120,62 @@ function buildHands() {
   }
 }
 
+async function dealersChoice(socket) {
+  gameStateDealer();
+  if (dealerScore === 21) loseGame();;
+  if (dealerScore === playerScore) loseGame();
+  if (dealerScore > playerScore && dealerScore < 22) loseGame();;
+  if (dealerScore > 21) {
+    gameOver = true;
+    winGame(socket);
+  }
+  if (dealerScore < playerScore) {
+    console.log('Dealer needs to hit')
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    addCard(dealerHand);
+  }
+
+}
+
 
 function gameStatePlayer() {
   dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
   playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
+  if (playerScore > 21) {
+    for (let card of playerHand) {
+      if (card.card === 'Ace' && card.value === 11) {
+        card.value = 1;
+        console.log('Ace value drops from 11 to 1 to avoid a bust')
+        playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
+        break;
+      }
+    }
+  }
   console.log(`The Dealer is showing one card - ${dealerHand[0].card} of ${dealerHand[0].suit} (Total: ${dealerHand[0].value})`)
+  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
+}
+
+function gameStateDealer() {
+  dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
+  playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
+  if (dealerScore > 21) {
+    for (let card of dealerHand) {
+      if (card.card === 'Ace' && card.value === 11) {
+        card.value = 1;
+        console.log('Ace value drops from 11 to 1 to avoid a bust')
+        dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
+        break;
+      }
+    }
+  }
+  console.log(`The Dealer\'s hand is ${dealerHand.map(card => card.card)} (Total: ${dealerScore})`)
   console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
 }
 
 async function playersChoice(socket) {
   gameStatePlayer();
   blackjackOrBust(socket);
-  if (!gameOver) {
+  if (playersTurn) {
     let { hitOrStand } = await prompt({
       type: 'Select',
       name: 'hitOrStand',
@@ -145,7 +188,7 @@ async function playersChoice(socket) {
       deck.splice(random, 1);
       playerHand.push(tempcard);
     } else {
-      console.log(`The dealers full hand is ${dealerHand[0].card} of ${dealerHand[0].suit}, ${dealerHand[1].card} of ${dealerHand[1].suit} (Total: ${dealerScore})`)
+      playersTurn = false;
     } 
   }
 }
@@ -160,4 +203,25 @@ function reset() {
   playersTurn = true;
   gameOver = false;
   // buildHands();
+}
+
+async function winGame(socket) {
+  winner = true
+  console.log('Congratulations, you won!')
+  let { hasWon } = await prompt({
+    type: 'Select',
+    name: 'hasWon',
+    message: 'Press Enter when you\'re ready to advance',
+    choices: ['Ready']
+  })
+  if (hasWon) {
+    socket.emit('answer1', 'winner', 'winner');
+  }
+}
+
+function loseGame() {
+  console.log('Sorry you lose');
+  console.log('Please try again');
+  playersTurn = false;
+  gameOver = true
 }
