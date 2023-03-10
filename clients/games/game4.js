@@ -41,10 +41,13 @@ function game4(socket) {
    await playersChoice(socket);
   }
   if (gameOver) {
-    setTimeout(() => {
-      reset();
-      game4(socket);
-    }, 2000);
+    if (!winner) {
+      setTimeout(() => {
+        reset();
+        game4(socket);
+      }, 2000);
+    }
+
   }
   }, 250);
   
@@ -71,10 +74,11 @@ async function blackjackOrBust(socket) {
     console.log('Please try again');
     playersTurn = false;
     gameOver = true
-  } else if (playerScore === 21) {
+  } else if (playerScore === 21 && playerHand.length === 2) {
     console.log('BLACKJACK!');
     playersTurn = false;
     gameOver = true
+    winner = true
     let { hasWon } = await prompt({
       type: 'Select',
       name: 'hasWon',
@@ -84,6 +88,8 @@ async function blackjackOrBust(socket) {
     if (hasWon) {
       socket.emit('answer1', 'winner', 'winner');
     }
+  } else if (playerScore === 21) {
+    console.log('21! Now let\'s see if the dealer can match');
   }
 }
 
