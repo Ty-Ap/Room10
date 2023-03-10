@@ -9,11 +9,13 @@ const room10 = server.of('/room10');
 room10.on('connection', (socket) => {
   console.log('Connected to socket #', socket.id);
 
-  socket.emit('prompt-credentials')
+  socket.emit('main-menu')
 
-  socket.emit('login');
 
-  socket.on('submit-credentials', (credentials) => {
+  socket.on('login', (credentials) => {
+    console.log(credentials);
+  })
+  socket.on('create-account', (credentials) => {
     console.log(credentials);
   })
 })

@@ -6,7 +6,12 @@ const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
 const { prompt } = require('enquirer');
 
-socket.on('create-account', async () => {
+socket.on('main-menu', mainMenu);
+
+
+
+
+async function mainMenu() {
   let { haveAccount } = await prompt({
     type: 'input',
     name: 'haveAccount',
@@ -14,44 +19,36 @@ socket.on('create-account', async () => {
   })
 
   if (haveAccount === '1') {
-    let { username } = await prompt({
-      type: 'input',
-      name: 'username',
-      message: 'Please enter your username'
-    })
-    
-    let { password } = await prompt({
-      type: 'input',
-      name: 'password',
-      message: 'Please enter your password'
-    })
-  
-    let credentials = { username, password }
+    let credentials = await getCredentials();
+    console.log(credentials);
     socket.emit('login', credentials);
   } else if (haveAccount === '2') {
-    let { username } = await prompt({
-      type: 'input',
-      name: 'username',
-      message: 'Please enter your username'
-    })
-    
-    let { password } = await prompt({
-      type: 'input',
-      name: 'password',
-      message: 'Please enter your password'
-    })
-  
-    let credentials = { username, password }
+    let credentials = await getCredentials();
     socket.emit('create-account', credentials);
-  } else {
+  } else if (haveAccount === '3') {
     console.log('Continuing as guest');
     socket.emit('continue-guest');
+  } else {
+    mainMenu();
   }
-})
+}
 
+async function getCredentials() {
+  let { username } = await prompt({
+    type: 'input',
+    name: 'username',
+    message: 'Please enter your username'
+  })
+  
+  let { password } = await prompt({
+    type: 'input',
+    name: 'password',
+    message: 'Please enter your password'
+  })
 
+  let credentials = { username, password };
+  return credentials
 
-
-// async function mainMenu() {
-
-// }
+}
+// async function signup
+// function continueGuest
