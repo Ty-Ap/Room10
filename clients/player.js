@@ -1,7 +1,8 @@
 'use strict'
 
 require('dotenv').config();
-const game1 = require('./games/game1')
+const game1 = require('./games/game1');
+const game6 = require('./games/game6');
 const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
@@ -27,8 +28,8 @@ socket.on('start-game', async (user) => {
   console.log(`Get ready to begin ${verifiedUser.username}`);
   setInterval(advanceTimer, 1000);
 });
-socket.on('game1', () => game1(socket) );
-socket.on('game1-retake', () => game1(socket));
+socket.on('game1', () => game6(socket) );
+socket.on('game1-retake', () => game6(socket));
 socket.on('game2', () => {
   multipleChoice(2);
 });
