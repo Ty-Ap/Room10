@@ -8,6 +8,7 @@ const game4 = require('./games/game4');
 const game5 = require('./games/game5');
 const game6 = require('./games/game6');
 const game7 = require('./games/game7');
+const game8 = require('./games/game8');
 const PORT = 3006;
 
 
@@ -38,8 +39,8 @@ socket.on('start-game', async (user) => {
 });
 
 
-socket.on('game1', () => game1(socket) );
-socket.on('game1-retake', () => game1(socket));
+socket.on('game1', () => game8(socket) );
+socket.on('game1-retake', () => game8(socket));
 socket.on('game2', () => game2(socket));
 socket.on('game2-retake', () => game2(socket));
 
