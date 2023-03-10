@@ -7,7 +7,6 @@ const server = new Server();
 const room10 = server.of('/room10');
 const { userModel } = require('../auth/index');
 const bcrypt = require('bcrypt');
-const { where } = require('sequelize');
 syncDatabase();
 
 room10.on('connection', (socket) => {
