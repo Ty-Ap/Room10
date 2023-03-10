@@ -72,6 +72,7 @@ room10.on('connection', (socket) => {
       socket.join('room2');
       socket.emit('game2');
     } else {
+      console.log('retake block')
       socket.emit('game1-retake');
     }
   })

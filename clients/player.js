@@ -1,14 +1,23 @@
 'use strict'
 
 require('dotenv').config();
+const game1 = require('./games/game1')
 const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
 const { prompt } = require('enquirer');
-const figlet = require('figlet')
+const figlet = require('figlet');
+const chalk = require('chalk');
+const chalkAnimation = require('chalk-animation');
 console.log(process.env.PORT);
+
+
+
 let timer = 5;
-let verifiedUser = {username: 'guest'}
+let verifiedUser = {username: 'guest'};
+
+
+
 
 socket.on('main-menu', mainMenu);
 socket.on('start-game', async (user) => {
@@ -18,12 +27,8 @@ socket.on('start-game', async (user) => {
   console.log(`Get ready to begin ${verifiedUser.username}`);
   setInterval(advanceTimer, 1000);
 });
-socket.on('game1', () => {
-  multipleChoice(1);
-});
-socket.on('game1-retake', () => {
-  multipleChoice(1);
-});
+socket.on('game1', () => game1(socket) );
+socket.on('game1-retake', () => game1(socket));
 socket.on('game2', () => {
   multipleChoice(2);
 });
@@ -132,16 +137,18 @@ function advanceTimer() {
 async function multipleChoice(roomNum) {
   console.clear();
   figlet(`Welcome to Room ${roomNum}`, (err, data) => {
-    console.log(data);
+    console.log(chalkAnimation.neon(data).render()) 
 });
-  let { answer } = await prompt({
-    type: 'input',
-    name: 'answer',
-    message: 'Hint: it\'s the first letter of the alphabet'
-  })
-  console.log(timer * -1);
-  let correctAnswer = 'a'
-  socket.emit(`answer${roomNum}`, answer, correctAnswer)
+  setTimeout(async () => {
+    let { answer } = await prompt({
+      type: 'input',
+      name: 'answer',
+      message: 'Hint: it\'s the first letter of the alphabet'
+    })
+    console.log(timer * -1);
+    let correctAnswer = 'a'
+    socket.emit(`answer${roomNum}`, answer, correctAnswer)
+  }, 100);
 }
 
 // async function signup
