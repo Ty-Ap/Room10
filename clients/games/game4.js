@@ -52,7 +52,6 @@ async function game4(socket) {
         }
       }
     }
-    let correctAnswer = 'a'
     console.log('You got it! Get ready for the next room!')
 
     setTimeout(() => {
@@ -63,9 +62,6 @@ async function game4(socket) {
   }, 100);  
 
 }
-
-
-
 
 module.exports = game4;
 
@@ -91,6 +87,3 @@ async function guessLetter(word, hangedWord, lives) {
   return hangedArray.join('');
 
 }
-
-
-module.exports = game4;
