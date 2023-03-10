@@ -5,15 +5,12 @@ const userSchema = (sequelizeDatabase, DataTypes) => {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    // unique: true,
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  startTime: {type: DataTypes.INTEGER},
-  endTime: {type: DataTypes.INTEGER},
-  highScore: {type: DataTypes.INTEGER},
 })};
 
 

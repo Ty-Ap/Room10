@@ -5,11 +5,14 @@ const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
 const { prompt } = require('enquirer');
+console.log(process.env.PORT);
+let timer = 5;
 
 socket.on('main-menu', mainMenu);
-
-
-
+socket.on('start-game', async () => {
+  console.log('Get ready to begin');
+  setInterval(advanceTimer, 1000);
+});
 
 async function mainMenu() {
   let { haveAccount } = await prompt({
@@ -20,7 +23,6 @@ async function mainMenu() {
 
   if (haveAccount === '1') {
     let credentials = await getCredentials();
-    console.log(credentials);
     socket.emit('login', credentials);
   } else if (haveAccount === '2') {
     let credentials = await getCredentials();
@@ -50,5 +52,13 @@ async function getCredentials() {
   return credentials
 
 }
+
+function advanceTimer() {
+  if (timer > 0) {
+    console.log(timer);
+  }
+  timer -= 1;
+}
+
 // async function signup
 // function continueGuest
