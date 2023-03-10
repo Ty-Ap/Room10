@@ -4,7 +4,11 @@
   "description": "401 mid-term project",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "start": "node index.js",
+    "test": "NODE_ENV=test jest --coverage --verbose --detectOpenHandles",
+    "db:config": "sequelize init:config",
+    "db:create": "sequelize db:create",
+    "db:delete": "sequelize db:drop"
   },
   "author": "Ty Aponte Tyler Bennett Jordan Covington Yen Xiong Yuan",
   "license": "ISC",
