@@ -17,8 +17,9 @@ let playerHand = [];
 let dealerScore = 0;
 let playerScore = 0;
 let playersTurn = true
-let gameOver = null;
 let winner = null;
+let loser = null;;
+
 
 class Card {
   constructor(card, value, suit) {
@@ -27,27 +28,35 @@ class Card {
     this.suit = suit
   }
 }
+
 buildDeck();
 
-function game4(socket) {
+
+async function game4(socket) {
   console.clear();
   figlet(`Welcome to Room 4`, (err, data) => {
     console.log(chalk.red(data));
   });
+  // console.log(deck);
 
-  setTimeout(async () => {
-    buildHands();
+  buildHands()
+
+  // gameStatePlayer();
+  
   while (playersTurn) {
    await playersChoice(socket);
   }
-  if (gameOver) {
-    setTimeout(() => {
-      reset();
-      game4(socket);
-    }, 2000);
-  }
-  }, 250);
-  
+
+  // setTimeout(async () => {
+  //   let { answer } = await prompt({
+  //     type: 'select',
+  //     name: 'answer',
+  //     message: 'Hint: it\'s the first letter of the alphabet',
+  //     choices: ['a', 'b', 'c', 'd']
+  //   });
+  //   let correctAnswer = 'a'
+  //   socket.emit(`answer1`, answer, correctAnswer)
+  // }, 100);
 }
 
 
@@ -57,6 +66,15 @@ function game4(socket) {
 
 module.exports = game4;
 
+
+
+
+function gameStatePlayer() {
+  dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
+  playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
+  console.log(`The Dealer is showing one card - ${dealerHand[0].card} of ${dealerHand[0].suit} (Total: ${dealerHand[0].value})`)
+  console.log(`Your hand is ${playerHand[0].card} of ${playerHand[0].suit}, ${playerHand[1].card} of ${playerHand[1].suit} (Total: ${playerScore})`);
+}
 
 function addCard(hand) {
   let random = Math.floor(Math.random() * deck.length)
@@ -69,12 +87,13 @@ async function blackjackOrBust(socket) {
   if (playerScore > 21) {
     console.log('Sorry you lose');
     console.log('Please try again');
-    playersTurn = false;
-    gameOver = true
+    // playersTurn = false;
+    reset();
+    loser = true
   } else if (playerScore === 21) {
     console.log('BLACKJACK!');
     playersTurn = false;
-    gameOver = true
+
     let { hasWon } = await prompt({
       type: 'Select',
       name: 'hasWon',
@@ -84,6 +103,27 @@ async function blackjackOrBust(socket) {
     if (hasWon) {
       socket.emit('answer1', 'winner', 'winner');
     }
+  }
+}
+
+async function playersChoice(socket) {
+  gameStatePlayer();
+  blackjackOrBust(socket);
+  if (!loser) {
+    let { hitOrStand } = await prompt({
+      type: 'Select',
+      name: 'hitOrStand',
+      message: `Your score is ${playerScore}. Would you like to hit (take another card), or stand (see the dealer's cards)`,
+      choices: ['Hit Me', 'Stand']
+    })
+    if (hitOrStand === 'Hit Me') {
+      let random = Math.floor(Math.random() * deck.length)
+      let tempcard = deck[random]
+      deck.splice(random, 1);
+      playerHand.push(tempcard);
+    } else {
+      console.log(`The dealers full hand is ${dealerHand[0].card} of ${dealerHand[0].suit}, ${dealerHand[1].card} of ${dealerHand[1].suit} (Total: ${dealerScore})`)
+    } 
   }
 }
 
@@ -105,6 +145,14 @@ function buildDeck() {
   }
 }
 
+function reset() {
+  buildDeck();
+  playerHand = [];
+  playerScore = 0;
+  dealerHand = [];
+  dealerScore = 0;
+  buildHands();
+}
 
 function buildHands() {
   for (let i = 0; i < 2; i++){
@@ -113,45 +161,4 @@ function buildHands() {
   for (let i = 0; i < 2; i++){
     addCard(dealerHand);
   }
-}
-
-
-function gameStatePlayer() {
-  dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
-  playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
-  console.log(`The Dealer is showing one card - ${dealerHand[0].card} of ${dealerHand[0].suit} (Total: ${dealerHand[0].value})`)
-  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
-}
-
-async function playersChoice(socket) {
-  gameStatePlayer();
-  blackjackOrBust(socket);
-  if (!gameOver) {
-    let { hitOrStand } = await prompt({
-      type: 'Select',
-      name: 'hitOrStand',
-      message: `Your score is ${playerScore}. Would you like to hit (take another card), or stand (see the dealer's cards)`,
-      choices: ['Hit Me', 'Stand']
-    })
-    if (hitOrStand === 'Hit Me') {
-      let random = Math.floor(Math.random() * deck.length)
-      let tempcard = deck[random]
-      deck.splice(random, 1);
-      playerHand.push(tempcard);
-    } else {
-      console.log(`The dealers full hand is ${dealerHand[0].card} of ${dealerHand[0].suit}, ${dealerHand[1].card} of ${dealerHand[1].suit} (Total: ${dealerScore})`)
-    } 
-  }
-}
-
-
-function reset() {
-  buildDeck();
-  playerHand = [];
-  playerScore = 0;
-  dealerHand = [];
-  dealerScore = 0;
-  playersTurn = true;
-  gameOver = false;
-  // buildHands();
 }
