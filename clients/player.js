@@ -52,12 +52,9 @@ socket.on('game4-retake', () => game4(socket));
 socket.on('game5', () => game5(socket));
 socket.on('game5-retake', () => game5(socket));
 
-socket.on('game6', () => {
-  multipleChoice(6);
-});
-socket.on('game6-retake', () => {
-  multipleChoice(6);
-});
+socket.on('game6', () => game6(socket));
+socket.on('game6-retake', () => game6(socket));
+
 socket.on('game7', () => game7(socket));
 socket.on('game7-retake', () => game7(socket));
 
