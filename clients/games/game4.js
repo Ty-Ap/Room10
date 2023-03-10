@@ -35,8 +35,10 @@ async function game4(socket) {
       }
     }
     while(word !== hangedWord){
-      hangedWord = await guessLetter(word, hangedWord, lives);
-      lives--;
+      let newhangedWord = await guessLetter(word, hangedWord, lives);
+      if (newhangedWord === hangedWord) {lives--;}
+      hangedWord = newhangedWord
+      
       if (lives < 1) {
         console.log('Sorry but you\'re out of lives. Try again with a new word');
         lives = 5
