@@ -25,12 +25,14 @@ async function game6(socket) {
     for (let letter of word) {
       hangedWord += '_'
     }
-    answer = await prompt({
-      type: 'select',
-      name: 'answer',
-      message: `Guess one letter in this word - ${hangedWord}`,
-      choices: alphabet
-    })
+    while(word !== hangedWord){
+      answer = await prompt({
+        type: 'select',
+        name: 'answer',
+        message: `Guess one letter in this word - ${hangedWord}`,
+        choices: alphabet
+      })
+    }
     let correctAnswer = 'a'
     socket.emit(`answer6`, answer, correctAnswer)
   }, 100);
