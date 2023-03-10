@@ -46,7 +46,12 @@ async function game4(socket) {
         word = chance.state({full: true}).toLowerCase();
         hangedWord = '';
         for (let letter of word) {
-          hangedWord += '_';
+          if (letter === ' ') {
+            hangedWord += ' '
+          }else {
+            hangedWord += '_'
+    
+          }
         }
       }
     }
