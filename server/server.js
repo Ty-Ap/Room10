@@ -10,12 +10,15 @@ const bcrypt = require('bcrypt');
 syncDatabase();
 
 let roomCount= [0,0,0,0,0,0,0,0,0,0,0];
+let leaderboard = [];
 const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,
   {username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24)},
   {username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24)}
 ];
 
-room10.on('connection', (socket) => {
+room10.on('connection',  async (socket) => {
+
+  leaderboard = await getLeaders();
 
   console.log('Connected to socket #', socket.id);
 
@@ -170,17 +173,10 @@ room10.on('connection', (socket) => {
   socket.on('answer9', async (answer, correctAnswer) => {
     console.log('answer9:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
-      let allUsers = await userModel.findAll();
-      // console.log(allUsers);
-      const groomedUsers = allUsers.map(user => {
-        return {username: user.username, bestScore: user.bestScore}
-      })
-      const leadersArray = groomedUsers.sort((a, b) => a.bestScore - b.bestScore);
-      console.log(leadersArray);
-      console.log(groomedUsers);
       socket.leave('room9');
       socket.join('room10');
-      socket.emit('game10');
+      console.log(leaderboard)
+      socket.emit('game10', leaderboard);
     } else {
       socket.emit('game9-retake');
     }
@@ -219,7 +215,9 @@ room10.on('connection', (socket) => {
 
   socket.on('update-score', async (user) => {
     let dbUser = await userModel.findOne({where: {username: user.username}});
-    dbUser.update(user)
+    dbUser.update(user);
+    leaderboard = await getLeaders();
+    console.log(leaderboard);
   })
 
 })
@@ -235,4 +233,14 @@ listen();
 
 async function syncDatabase() {
   await userModel.sync();
+}
+
+async function getLeaders() {
+  let allUsers = await userModel.findAll();
+  // console.log(allUsers);
+  const groomedUsers = allUsers.map(user => {
+    return {username: user.username, bestScore: user.bestScore}
+  })
+  const leadersArray = groomedUsers.sort((a, b) => a.bestScore - b.bestScore);
+  return leadersArray;
 }

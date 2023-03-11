@@ -78,11 +78,11 @@ socket.on('game8-retake', () => game8(socket));
 socket.on('game9', () => game9(socket));
 socket.on('game9-retake', () => game9(socket));
 
-socket.on('game10', () => {
+socket.on('game10', (leaderboard) => {
   if(!verifiedUser.isGuest) {
     updateBestScore();
   }
-  game10(socket, verifiedUser)
+  game10(socket, verifiedUser, leaderboard)
 });
 socket.on('game10-retake', () => game10(socket, verifiedUser));
 
