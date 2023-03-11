@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 syncDatabase();
 
 let roomCount= [0,0,0,0,0,0,0,0,0,0,0];
-const messageQueue = [
+const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,
   {username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24)},
   {username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24)}
 ];
@@ -28,6 +28,7 @@ room10.on('connection', (socket) => {
       let user = await userModel.findOne({where: {
         username: credentials.username
       }})
+      console.log(user, hashedPassword)
       if (user.password === hashedPassword) {
         console.log('Success, emit game start')
       }
@@ -46,7 +47,7 @@ room10.on('connection', (socket) => {
         password: hashedPassword
       })
       console.log(newUser);
-      socket.emit('start-game', user);
+      socket.emit('start-game', newUser);
       setTimeout(() => {
         socket.join('room1');
         console.log(socket.id, 'has joined room1');
@@ -181,6 +182,22 @@ room10.on('connection', (socket) => {
 
   socket.on('get-messages', () => {
     socket.emit('send-messages', messageQueue)
+  });
+
+  socket.on('room-message-client', (chat, verifiedUser) => {
+    console.log('received', chat, verifiedUser)
+    messageQueue.shift();
+    let messageObject = {
+      username: verifiedUser.username,
+      message: chat,
+      timeStamp: Date().slice(16, 24)
+    }
+    messageQueue.push(messageObject);
+    console.log(messageQueue[messageQueue.length - 1]);
+
+
+    // socket.emit('room-message-server', messageQueue[messageQueue.length - 1])
+    room10.to('room10').emit('room-message-server', messageQueue[messageQueue.length - 1])
   })
 
 })

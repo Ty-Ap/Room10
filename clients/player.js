@@ -67,8 +67,8 @@ socket.on('game8-retake', () => game8(socket));
 socket.on('game9', () => game9(socket));
 socket.on('game9-retake', () => game9(socket));
 
-socket.on('game10', () => game10(socket));
-socket.on('game10-retake', () => game10(socket));
+socket.on('game10', () => game10(socket, verifiedUser));
+socket.on('game10-retake', () => game10(socket, verifiedUser));
 
 
 socket.on('winner', () => {
