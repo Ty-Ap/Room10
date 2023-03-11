@@ -23,7 +23,7 @@ const chalkAnimation = require('chalk-animation');
 
 
 
-let timer = 2;
+let timer = 5;
 let verifiedUser = {username: 'guest'};
 
 
@@ -39,8 +39,8 @@ socket.on('start-game', async (user) => {
 });
 
 
-socket.on('game1', () => game8(socket) );
-socket.on('game1-retake', () => game8(socket));
+socket.on('game1', () => game1(socket) );
+socket.on('game1-retake', () => game1(socket));
 socket.on('game2', () => game2(socket));
 socket.on('game2-retake', () => game2(socket));
 
@@ -59,12 +59,9 @@ socket.on('game6-retake', () => game6(socket));
 socket.on('game7', () => game7(socket));
 socket.on('game7-retake', () => game7(socket));
 
-socket.on('game8', () => {
-  multipleChoice(8);
-});
-socket.on('game8-retake', () => {
-  multipleChoice(8);
-});
+socket.on('game8', () => game8(socket));
+socket.on('game8-retake', () => game8(socket));
+
 socket.on('game9', () => {
   multipleChoice(9);
 });
