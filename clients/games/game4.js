@@ -10,8 +10,9 @@ const figlet = require('figlet');
 const chalkAnimation = require('chalk-animation');
 const Chance = require('chance');
 const chance = new Chance();
+
 let answer = null;
-let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+let chosenArray = [];
 
 async function game4(socket) {
   console.clear();
@@ -37,9 +38,10 @@ async function game4(socket) {
       hangedWord = newhangedWord
       
       if (lives < 1) {
-        console.log('Sorry but you\'re out of lives. Try again with a new word');
+        console.log(`Sorry but you're out of lives. The word was ${word}`);
+        console.log('Please try again');
         lives = 5
-        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        chosenArray = [];
         word = chance.state({full: true}).toLowerCase();
         hangedWord = '';
         for (let letter of word) {
@@ -67,23 +69,35 @@ module.exports = game4;
 
 
 async function guessLetter(word, hangedWord, lives) {
+  if (chosenArray.length > 1) console.log(`So far you have chosen ${chosenArray}`)
   let hangedArray = hangedWord.split('');
   answer = await prompt({
-    type: 'select',
+    type: 'input',
     name: 'answer',
     message: `You have ${lives} remaining. Guess one letter in this word - ${hangedWord}.`,
-    choices: alphabet.split('')
   })
+
+  while(answer.answer.length > 1 || chosenArray.includes(answer.answer)) {
+    if (answer.answer.length > 1) {
+    console.log('Please enter one letter at a time to proceed.')
+    } else if (chosenArray.includes(answer.answer)) {
+      console.log(`Please pick a new letter. So far you have chosen ${chosenArray}`);
+    }
+    answer = await prompt({
+      type: 'input',
+      name: 'answer',
+      message: `You have ${lives} remaining. Guess one letter in this word - ${hangedWord}.`,
+    })  
+  }
+
+  chosenArray.push(answer.answer);
+
 
   for (let i = 0; i < word.length; i++) {
     if (word[i] === answer.answer) {
       hangedArray[i] = answer.answer
     }
   } 
-  let removalIndex = alphabet.indexOf(answer.answer);
-  let newAlphabet = alphabet.split('');
-  newAlphabet.splice(removalIndex, 1);
-  alphabet = newAlphabet.join('')
   return hangedArray.join('');
 
 }
