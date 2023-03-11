@@ -35,7 +35,7 @@ room10.on('connection', (socket) => {
         socket.emit('start-game', user);
         setTimeout(() => {
           socket.emit('game1', roomCount[1])
-        }, 7500);
+        }, 10500);
       } else {
         socket.emit('main-menu', 'Incorrect Password, please try again.\n' )
       }
@@ -61,7 +61,7 @@ room10.on('connection', (socket) => {
         socket.join('room1');
         console.log(socket.id, 'has joined room1');
         socket.emit('game1');
-      }, 7500);
+      }, 10500);
 
     } catch (error) {
       console.log(error)
@@ -167,9 +167,17 @@ room10.on('connection', (socket) => {
       socket.emit('game8-retake');
     }
   })
-  socket.on('answer9', (answer, correctAnswer) => {
+  socket.on('answer9', async (answer, correctAnswer) => {
     console.log('answer9:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
+      let allUsers = await userModel.findAll();
+      // console.log(allUsers);
+      const groomedUsers = allUsers.map(user => {
+        return {username: user.username, bestScore: user.bestScore}
+      })
+      const leadersArray = groomedUsers.sort((a, b) => a.bestScore - b.bestScore);
+      console.log(leadersArray);
+      console.log(groomedUsers);
       socket.leave('room9');
       socket.join('room10');
       socket.emit('game10');
