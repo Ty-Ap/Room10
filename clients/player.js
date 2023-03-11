@@ -76,11 +76,14 @@ socket.on('winner', () => {
   console.log('NEVER GONNA GIVE YOU UP');
 })
 
-async function mainMenu() {
+async function mainMenu(error=null) {
   console.clear();
   figlet(`Room 10`, (err, data) => {
     console.log(chalk.greenBright(data)) 
-});
+    setTimeout(() => {
+      if (error) console.log(error);
+    }, 200);
+  });
 
   setTimeout(async () => {
     

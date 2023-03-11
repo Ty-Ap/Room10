@@ -24,24 +24,33 @@ room10.on('connection', (socket) => {
 
   socket.on('login', async (credentials) => {
     let hashedPassword = await bcrypt.hash(credentials.password, 5);
+    console.log(credentials.password, hashedPassword);
     try {
       let user = await userModel.findOne({where: {
         username: credentials.username
       }})
-      console.log(user, hashedPassword)
-      if (user.password === hashedPassword) {
+      // console.log(user, hashedPassword)
+      if (bcrypt.compare(credentials.password, user.password)) {
         console.log('Success, emit game start')
+        socket.emit('start-game', user);
+        setTimeout(() => {
+          socket.emit('game1', roomCount[1])
+        }, 5500);
+      } else {
+        socket.emit('main-menu', 'Incorrect Password, please try again.\n' )
       }
-      socket.emit('start-game', user);
+
+
     } catch (error) {
       console.log(error);
-      socket.emit('main-menu')
+      socket.emit('main-menu', 'Cannot find account by that username\n')
     }
   })
   socket.on('create-account', async (credentials) => {
     
     try {
       let hashedPassword = await bcrypt.hash(credentials.password, 5);
+      console.log(credentials.password, hashedPassword);
       let newUser = await userModel.create({
         username: credentials.username,
         password: hashedPassword
@@ -51,8 +60,8 @@ room10.on('connection', (socket) => {
       setTimeout(() => {
         socket.join('room1');
         console.log(socket.id, 'has joined room1');
-      }, 5000);
-      socket.emit('game1');
+        socket.emit('game1');
+      }, 5500);
 
     } catch (error) {
       console.log(error)
