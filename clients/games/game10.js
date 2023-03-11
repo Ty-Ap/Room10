@@ -28,7 +28,6 @@ async function game10(socket, verifiedUser) {
       }
     });
     socket.on('room-message-server', (messageObject) => {
-      console.log(messageObject)
       console.log(`${messageObject.timeStamp} - ${messageObject.username}: ${messageObject.message}`)
       if (!awaitingPrompt) {
         chatLoop(socket, verifiedUser);
@@ -50,7 +49,7 @@ module.exports = game10;
 
 
 async function chatLoop(socket, verifiedUser) {
-  let awaitingPrompt = true
+  awaitingPrompt = true
   let { chat } = await prompt({
     type: 'input',
     name: 'chat',

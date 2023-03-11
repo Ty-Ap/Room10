@@ -20,13 +20,14 @@ const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const chalkAnimation = require('chalk-animation');
-
+const Chance = require('chance');
+const chance = new Chance();
 
 
 
 
 let timer = 5;
-let verifiedUser = {username: 'guest'};
+let verifiedUser = {username: chance.name() + ' (Guest)' };
 
 
 
