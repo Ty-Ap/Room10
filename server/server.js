@@ -35,7 +35,7 @@ room10.on('connection', (socket) => {
         socket.emit('start-game', user);
         setTimeout(() => {
           socket.emit('game1', roomCount[1])
-        }, 5500);
+        }, 7500);
       } else {
         socket.emit('main-menu', 'Incorrect Password, please try again.\n' )
       }
@@ -61,7 +61,7 @@ room10.on('connection', (socket) => {
         socket.join('room1');
         console.log(socket.id, 'has joined room1');
         socket.emit('game1');
-      }, 5500);
+      }, 7500);
 
     } catch (error) {
       console.log(error)
@@ -79,7 +79,7 @@ room10.on('connection', (socket) => {
     setTimeout(() => {
       socket.emit('game1', roomCount[1]);
 
-    }, 5500);
+    }, 7500);
   })
 
 
@@ -207,6 +207,11 @@ room10.on('connection', (socket) => {
 
     // socket.emit('room-message-server', messageQueue[messageQueue.length - 1])
     room10.to('room10').emit('room-message-server', messageQueue[messageQueue.length - 1])
+  })
+
+  socket.on('update-score', async (user) => {
+    let dbUser = await userModel.findOne({where: {username: user.username}});
+    dbUser.update(user)
   })
 
 })

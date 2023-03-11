@@ -27,7 +27,7 @@ const chance = new Chance();
 
 
 let timer = 5;
-let verifiedUser = {username: chance.name() + ' (Guest)' };
+let verifiedUser = {username: chance.name() + ' (Guest)', isGuest: true};
 
 
 
@@ -37,8 +37,13 @@ socket.on('start-game', async (user) => {
   if (user) {
     verifiedUser = user;
   }
+
+
   console.log(`Get ready to begin ${verifiedUser.username}`);
-  setInterval(advanceTimer, 1000);
+  if (verifiedUser.bestScore) console.log(verifiedUser.bestScore);
+  setTimeout(() => {
+    setInterval(advanceTimer, 1000);
+  }, 2000);
 });
 
 
@@ -68,7 +73,12 @@ socket.on('game8-retake', () => game8(socket));
 socket.on('game9', () => game9(socket));
 socket.on('game9-retake', () => game9(socket));
 
-socket.on('game10', () => game10(socket, verifiedUser));
+socket.on('game10', () => {
+  if(!verifiedUser.isGuest) {
+    updateBestScore();
+  }
+  game10(socket, verifiedUser)
+});
 socket.on('game10-retake', () => game10(socket, verifiedUser));
 
 
@@ -132,7 +142,6 @@ function advanceTimer() {
     figlet(`${timer}`, (err, data) => {
       console.log(chalk.yellow(data))
   });
-    // console.log(timer);
   }
   timer -= 1;
 }
@@ -152,6 +161,19 @@ async function multipleChoice(roomNum) {
     let correctAnswer = 'a'
     socket.emit(`answer${roomNum}`, answer, correctAnswer)
   }, 100);
+}
+
+function updateBestScore() {
+  let score = timer * -1
+  if (verifiedUser.bestScore) {
+    if (score < verifiedUser.bestScore) {
+      verifiedUser.bestScore = score
+      socket.emit('update-score', verifiedUser)
+    }
+  } else {
+    verifiedUser.bestScore = score
+    socket.emit('update-score', verifiedUser)
+  }
 }
 
 // async function signup

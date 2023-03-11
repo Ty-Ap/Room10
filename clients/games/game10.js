@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
 // const socket = io(`http://localhost:${PORT}/room60`);
 const figlet = require('figlet');
-const chalkAnimation = require('chalk-animation');
+const chalk = require('chalk')
 const Chance = require('chance');
 const chance = new Chance();
 let awaitingPrompt = false
@@ -18,8 +18,9 @@ let awaitingPrompt = false
 async function game10(socket, verifiedUser) {
   console.clear();
   figlet(`Welcome to Room 10`, (err, data) => {
-    console.log(chalkAnimation.neon(data).render()) 
+    console.log(chalk.yellow(data)) 
 });
+  console.log('\n\n\n', verifiedUser.bestScore);
   setTimeout(async () => {
     socket.emit('get-messages');
     socket.on('send-messages', (messageQueue) => {
@@ -39,7 +40,7 @@ async function game10(socket, verifiedUser) {
     }, 200);
 
 
-  }, 100);
+  }, 10000);
 
 }
 
