@@ -20,13 +20,12 @@ async function game10(socket) {
     console.log(chalkAnimation.neon(data).render()) 
 });
   setTimeout(async () => {
-
-
-
-    setTimeout(() => {
-      socket.emit('answer10', word, hangedWord);
-    }, 1000);
-
+    socket.emit('get-messages');
+    socket.on('send-messages', (messageQueue) => {
+      for (let message of messageQueue) {
+        console.log(`${message.timeStamp} - ${message.username}: ${message.message}`)
+      }
+    });
 
   }, 100);
 

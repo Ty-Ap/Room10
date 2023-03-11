@@ -10,6 +10,10 @@ const bcrypt = require('bcrypt');
 syncDatabase();
 
 let roomCount= [0,0,0,0,0,0,0,0,0,0,0];
+const messageQueue = [
+  {username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24)},
+  {username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24)}
+];
 
 room10.on('connection', (socket) => {
 
@@ -175,6 +179,9 @@ room10.on('connection', (socket) => {
     }
   })
 
+  socket.on('get-messages', () => {
+    socket.emit('send-messages', messageQueue)
+  })
 
 })
 

@@ -23,7 +23,7 @@ async function game1(socket, playerCount=null) {
       choices: ['a', 'b', 'c', 'd']
     })
     let correctAnswer = 'a'
-    socket.emit(`answer1`, answer, correctAnswer)
+    socket.emit(`answer9`, answer, correctAnswer)
   }, 100);
 }
 
