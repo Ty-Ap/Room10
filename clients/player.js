@@ -9,6 +9,7 @@ const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const chalkAnimation = require('chalk-animation');
+const game2 = require('./games/game2');
 console.log(process.env.PORT);
 
 
@@ -29,12 +30,9 @@ socket.on('start-game', async (user) => {
 });
 socket.on('game1', () => game1(socket) );
 socket.on('game1-retake', () => game1(socket));
-socket.on('game2', () => {
-  multipleChoice(2);
-});
-socket.on('game2-retake', () => {
-  multipleChoice(2);
-});
+socket.on('game2', () => game2(socket));
+socket.on('game2-retake', () => game2(socket));
+
 socket.on('game3', () => {
   multipleChoice(3);
 });
@@ -91,8 +89,8 @@ async function mainMenu() {
   let { haveAccount } = await prompt({
     type: 'input',
     name: 'haveAccount',
-    message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.'
-  })
+    message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.\n\n\n',
+  });
 
   if (haveAccount === '1') {
     let credentials = await getCredentials();

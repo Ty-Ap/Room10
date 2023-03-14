@@ -2,7 +2,7 @@
 
 const { prompt } = require('enquirer');
 require('dotenv').config();
-const PORT = process.env.PORT || 3006;
+const PORT = 3006;
 const { io } = require('socket.io-client');
 // const socket = io(`http://localhost:${PORT}/room10`);
 const figlet = require('figlet');
