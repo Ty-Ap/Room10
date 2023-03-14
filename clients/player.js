@@ -21,7 +21,7 @@ const chalkAnimation = require('chalk-animation');
 
 
 
-let timer = 1;
+let timer = 5;
 let verifiedUser = {username: 'guest'};
 
 

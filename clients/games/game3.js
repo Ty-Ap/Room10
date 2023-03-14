@@ -24,9 +24,13 @@ let correctAnswer = colorArr[+ans-1];
 let { answer } = await prompt({
   type: 'select',
   name: 'answer',
-  message: `In this paragraph you will see ${chalk.red('certain')} words in different colors. \nDisregarding ${chalk.magenta('words')} that are white, solve the following ${chalk.yellow('equation')} \nand with the answer count that amount of ${chalk.green('colored')} words from the beginning.  \nType ${chalk.blue('the')} color of the word you land on: \n\n
+  message: `\nIn this paragraph you will see ${chalk.red('certain')} words in different colors. \nDisregarding ${chalk.magenta('words')} that are white, solve the following ${chalk.yellow('equation')} \nand with the answer count that amount of ${chalk.green('colored')} words from the beginning. \nType ${chalk.blue('the')} color of the word you land on: \n\n
 
-  Two cyclists start ${int1} miles apart, and begin cycling towards each other at ${int2} mph. The instant they begin, a fly goes from one cyclist to the other, then back to the first cyclist, and so on, always flying between the cyclists. The fly flies at a constant ${ans} mph. How far in total does the fly travel when the cyclists meet? \n\n\n\n`,
+  Two cyclists start ${int1} miles apart, and begin cycling towards each other at ${int2} mph.\n
+  The instant they begin, a fly goes from one cyclist to the other, then back to the first cyclist,\n
+  and so on, always flying between the cyclists. The fly flies at a constant ${ans} mph. How far in \n
+  total does the fly travel when the cyclists meet? \n\n\n\n`,
+
   choices: ['red', 'magenta', 'yellow', 'green', 'blue']
 
 })
