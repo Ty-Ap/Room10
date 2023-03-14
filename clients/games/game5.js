@@ -25,12 +25,12 @@ let scramble = '';
 let correctAnswer = '';
 
 for (let i = 0; i < 5; i++){
-  let rand = Math.floor(Math.random() * (ABC.length -1));
+  let rand = Math.floor(Math.random() * (ABC.length));
   word += ABC[rand]
 }
 correctAnswer = word;
 for (let i = 0; i < 44; i++){
-  let rand = Math.floor(Math.random() * (abc.length -1));
+  let rand = Math.floor(Math.random() * (abc.length));
   word += abc[rand]
 }
 

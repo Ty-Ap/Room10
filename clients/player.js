@@ -4,7 +4,10 @@ require('dotenv').config();
 const game1 = require('./games/game1');
 const game2 = require('./games/game2');
 const game3 = require('./games/game3');
+// const game4 = require('./games/game4');
 const game5 = require('./games/game5');
+// const game6 = require('./games/game6');
+const game7 = require('./games/game7');
 const PORT = 3006;
 
 const { io } = require('socket.io-client');
@@ -57,12 +60,9 @@ socket.on('game6', () => {
 socket.on('game6-retake', () => {
   multipleChoice(6);
 });
-socket.on('game7', () => {
-  multipleChoice(7);
-});
-socket.on('game7-retake', () => {
-  multipleChoice(7);
-});
+socket.on('game7', () => game7(socket));
+socket.on('game7-retake', () => game7(socket));
+
 socket.on('game8', () => {
   multipleChoice(8);
 });
