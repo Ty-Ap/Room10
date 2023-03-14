@@ -43,11 +43,12 @@ while (word.length > 0) {
 
 console.log('\n\n\n Input the capital letters that appear in the following cypher (do not use spaces): \n\n\n');
 
+chalkAnimation.radar(`${scramble}\n\n\n\n`)
 
 let { answer } = await prompt({
   type: 'input',
   name: 'answer',
-  message: `${chalkAnimation.radar(`${scramble}\n\n\n\n`)} `,
+  message: 'Input your answer',
 
 
 })
