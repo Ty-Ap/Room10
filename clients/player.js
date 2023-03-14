@@ -6,6 +6,7 @@ const game2 = require('./games/game2');
 const game3 = require('./games/game3');
 const game5 = require('./games/game5');
 const PORT = 3006;
+
 const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
 const { prompt } = require('enquirer');
@@ -17,7 +18,7 @@ const chalkAnimation = require('chalk-animation');
 
 
 
-let timer = 5;
+let timer = 1;
 let verifiedUser = {username: 'guest'};
 
 
@@ -31,6 +32,7 @@ socket.on('start-game', async (user) => {
   console.log(`Get ready to begin ${verifiedUser.username}`);
   setInterval(advanceTimer, 1000);
 });
+
 socket.on('game1', () => game1(socket) );
 socket.on('game1-retake', () => game1(socket));
 socket.on('game2', () => game2(socket));

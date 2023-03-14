@@ -16,9 +16,10 @@ async function game1(socket) {
 });
   setTimeout(async () => {
     let { answer } = await prompt({
-      type: 'input',
+      type: 'select',
       name: 'answer',
-      message: 'Hint: it\'s the first letter of the alphabet'
+      message: 'Hint: it\'s the first letter of the alphabet',
+      choices: ['a', 'b', 'c', 'd']
     })
     let correctAnswer = 'a'
     socket.emit(`answer1`, answer, correctAnswer)
