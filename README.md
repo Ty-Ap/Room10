@@ -20,10 +20,11 @@ A game that can be played completely in the CLI leveraging WebSocket to enable m
 
 #### `.env` requirements (where applicable)
 
-
 #### How to initialize/run your application (where applicable)
 
-- `npm start`
+- run npm i in command line
+- cd into server > nodemon server.js into command line
+- cd into clients > type node 'player.js' into command line
 
 #### Features / Routes
 
