@@ -7,12 +7,12 @@ const PORT = 3006;
 const { io } = require('socket.io-client');
 // const socket = io(`http://localhost:${PORT}/room10`);
 const figlet = require('figlet');
-const chalkAnimation = require('chalk-animation');
+const chalk = require('chalk');
 
 async function game2(socket) {
   console.clear();
   figlet(`Welcome to Room 2`, (err, data) => {
-    console.log(chalkAnimation.neon(data).render())
+    console.log(chalk.green(data))
 });
   let word = chance.state({full: true}).toLowerCase();
   let correctAnswer = word;
@@ -27,38 +27,9 @@ let { answer } = await prompt({
   name: 'answer',
   message: `Find the following word by rearranging the letters:   ${scramble}\n\n\n\n`
 })
+answer = answer.toLowerCase();
 socket.emit('answer2', answer, correctAnswer)
 
-// if (correctAnswer === answer) {
-//   console.log('Good Job!')
-// } else {
-//   console.log('Sorry play again')
-//   setTimeout(async () => {
-//     console.clear();
-//     game();
-//   }, 2000);
-// }
 }
-// game();
-
-module.exports = game2;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = game2;
