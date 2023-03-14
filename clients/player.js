@@ -1,16 +1,17 @@
 'use strict'
 
 require('dotenv').config();
-const game1 = require('./games/game1')
-const PORT = process.env.PORT || 3006;
+const game1 = require('./games/game1');
+const game2 = require('./games/game2');
+const game3 = require('./games/game3');
+const PORT = 3006;
 const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
 const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const chalkAnimation = require('chalk-animation');
-const game2 = require('./games/game2');
-console.log(process.env.PORT);
+
 
 
 
@@ -33,12 +34,9 @@ socket.on('game1-retake', () => game1(socket));
 socket.on('game2', () => game2(socket));
 socket.on('game2-retake', () => game2(socket));
 
-socket.on('game3', () => {
-  multipleChoice(3);
-});
-socket.on('game3-retake', () => {
-  multipleChoice(3);
-});
+socket.on('game3', () => game3(socket));
+socket.on('game3-retake', () => game3(socket));
+
 socket.on('game4', () => {
   multipleChoice(4);
 });
