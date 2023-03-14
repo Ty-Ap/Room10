@@ -4,7 +4,7 @@ require('dotenv').config();
 const game1 = require('./games/game1');
 const game2 = require('./games/game2');
 const game3 = require('./games/game3');
-// const game4 = require('./games/game4');
+const game4 = require('./games/game4');
 const game5 = require('./games/game5');
 // const game6 = require('./games/game6');
 const game7 = require('./games/game7');
@@ -44,12 +44,8 @@ socket.on('game2-retake', () => game2(socket));
 socket.on('game3', () => game3(socket));
 socket.on('game3-retake', () => game3(socket));
 
-socket.on('game4', () => {
-  multipleChoice(4);
-});
-socket.on('game4-retake', () => {
-  multipleChoice(4);
-});
+socket.on('game4', () => game4(socket));
+socket.on('game4-retake', () => game4(socket));
 
 socket.on('game5', () => game5(socket));
 socket.on('game5-retake', () => game5(socket));
@@ -86,25 +82,34 @@ socket.on('winner', () => {
 })
 
 async function mainMenu() {
-  let { haveAccount } = await prompt({
-    type: 'input',
-    name: 'haveAccount',
-    message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.\n\n\n',
-  });
+  console.clear();
+  figlet(`Room 10`, (err, data) => {
+    console.log(chalk.greenBright(data)) 
+});
 
-  if (haveAccount === '1') {
-    let credentials = await getCredentials();
-    socket.emit('login', credentials);
-  } else if (haveAccount === '2') {
-    let credentials = await getCredentials();
-    socket.emit('create-account', credentials);
-  } else if (haveAccount === '3') {
-    console.log('Continuing as guest');
-    socket.emit('continue-guest');
-  } else {
-    mainMenu();
-  }
+  setTimeout(async () => {
+    
+    let { haveAccount } = await prompt({
+      type: 'input',
+      name: 'haveAccount',
+      message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.\n\n\n',
+    });
+  
+    if (haveAccount === '1') {
+      let credentials = await getCredentials();
+      socket.emit('login', credentials);
+    } else if (haveAccount === '2') {
+      let credentials = await getCredentials();
+      socket.emit('create-account', credentials);
+    } else if (haveAccount === '3') {
+      console.log('Continuing as guest');
+      socket.emit('continue-guest');
+    } else {
+      mainMenu();
+    }
+  }, 2000);
 }
+
 
 async function getCredentials() {
   let { username } = await prompt({
@@ -127,7 +132,10 @@ async function getCredentials() {
 function advanceTimer() {
   if (timer > 0) {
     console.clear();
-    console.log(timer);
+    figlet(`${timer}`, (err, data) => {
+      console.log(chalk.yellow(data))
+  });
+    // console.log(timer);
   }
   timer -= 1;
 }
