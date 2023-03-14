@@ -14,7 +14,7 @@ async function game2(socket) {
   figlet(`Welcome to Room 2`, (err, data) => {
     console.log(chalk.green(data))
 });
-  let word = chance.state({full: true}).toLowerCase();
+  let word = chance.state({country:'us', full: true}).toLowerCase();
   let correctAnswer = word;
   let scramble = '';
   while (word.length > 0) {
