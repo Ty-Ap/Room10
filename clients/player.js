@@ -9,6 +9,7 @@ const game5 = require('./games/game5');
 const game6 = require('./games/game6');
 const game7 = require('./games/game7');
 const game8 = require('./games/game8');
+const game9 = require('./games/game9');
 const PORT = 3006;
 
 
@@ -62,12 +63,9 @@ socket.on('game7-retake', () => game7(socket));
 socket.on('game8', () => game8(socket));
 socket.on('game8-retake', () => game8(socket));
 
-socket.on('game9', () => {
-  multipleChoice(9);
-});
-socket.on('game9-retake', () => {
-  multipleChoice(9);
-});
+socket.on('game9', () => game9(socket));
+socket.on('game9-retake', () => game9(socket));
+
 socket.on('game10', () => {
   multipleChoice(10);
 });
