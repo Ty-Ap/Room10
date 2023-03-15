@@ -20,7 +20,8 @@ async function game10(socket, verifiedUser) {
   figlet(`Welcome to Room 10`, (err, data) => {
     console.log(chalk.yellow(data)) 
 });
-  console.log('\n\n\n', verifiedUser.bestScore);
+if(verifiedUser.bestScore) console.log('\n\n\n', verifiedUser.bestScore);
+
   setTimeout(async () => {
     socket.emit('get-messages');
     socket.on('send-messages', (messageQueue) => {

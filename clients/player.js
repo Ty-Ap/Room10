@@ -38,12 +38,17 @@ socket.on('start-game', async (user) => {
     verifiedUser = user;
   }
 
-
-  console.log(`Get ready to begin ${verifiedUser.username}`);
-  if (verifiedUser.bestScore) console.log(verifiedUser.bestScore);
+  figlet(`GODSPEED\n\n ${verifiedUser.username}`, (err, data) => {
+    console.log(chalk.red(data));
+});
+  if (verifiedUser.bestScore) {
+    figlet(`Hi-Score: ${verifiedUser.bestScore}`, (err, data) => {
+      console.log(chalk.red(data));
+  });
+  };
   setTimeout(() => {
     setInterval(advanceTimer, 1000);
-  }, 2000);
+  }, 5000);
 });
 
 
@@ -81,11 +86,6 @@ socket.on('game10', () => {
 });
 socket.on('game10-retake', () => game10(socket, verifiedUser));
 
-
-socket.on('winner', () => {
-  console.log('NEVER GONNA GIVE YOU UP');
-})
-
 async function mainMenu(error=null) {
   console.clear();
   figlet(`Room 10`, (err, data) => {
@@ -96,20 +96,22 @@ async function mainMenu(error=null) {
   });
 
   setTimeout(async () => {
+
     
     let { haveAccount } = await prompt({
-      type: 'input',
+      type: 'select',
       name: 'haveAccount',
-      message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.\n\n\n',
+      message: '\n Select a sign in',
+      choices: ['Sign in with existing account', 'Create account', 'Continue as Guest'],
     });
-  
-    if (haveAccount === '1') {
+
+    if (haveAccount === 'Sign in with existing account') {
       let credentials = await getCredentials();
       socket.emit('login', credentials);
-    } else if (haveAccount === '2') {
+    } else if (haveAccount === 'Create account') {
       let credentials = await getCredentials();
       socket.emit('create-account', credentials);
-    } else if (haveAccount === '3') {
+    } else if (haveAccount === 'Continue as Guest') {
       console.log('Continuing as guest');
       socket.emit('continue-guest');
     } else {
@@ -124,7 +126,7 @@ async function getCredentials() {
     name: 'username',
     message: 'Please enter your username'
   })
-  
+  username = username.toLowerCase();
   let { password } = await prompt({
     type: 'input',
     name: 'password',
@@ -144,23 +146,6 @@ function advanceTimer() {
   });
   }
   timer -= 1;
-}
-
-async function multipleChoice(roomNum) {
-  console.clear();
-  figlet(`Welcome to Room ${roomNum}`, (err, data) => {
-    console.log(chalkAnimation.neon(data).render()) 
-});
-  setTimeout(async () => {
-    let { answer } = await prompt({
-      type: 'input',
-      name: 'answer',
-      message: 'Hint: it\'s the first letter of the alphabet'
-    })
-    console.log(timer * -1);
-    let correctAnswer = 'a'
-    socket.emit(`answer${roomNum}`, answer, correctAnswer)
-  }, 100);
 }
 
 function updateBestScore() {
