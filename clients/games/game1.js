@@ -9,11 +9,12 @@ const figlet = require('figlet');
 const chalkAnimation = require('chalk-animation');
 
 
-async function game1(socket) {
+async function game1(socket, playerCount=null) {
   console.clear();
   figlet(`Welcome to Room 1`, (err, data) => {
     console.log(chalkAnimation.neon(data).render()) 
 });
+  if(playerCount){console.log(`LOOK HERE>>>>>>>>>>>>>>${playerCount}`)};
   setTimeout(async () => {
     let { answer } = await prompt({
       type: 'select',
