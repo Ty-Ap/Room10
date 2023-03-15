@@ -9,6 +9,8 @@ const { userModel } = require('../auth/index');
 const bcrypt = require('bcrypt');
 syncDatabase();
 
+let roomCount= [0,0,0,0,0,0,0,0,0,0,0];
+
 room10.on('connection', (socket) => {
 
   console.log('Connected to socket #', socket.id);
@@ -57,9 +59,12 @@ room10.on('connection', (socket) => {
 
   socket.on('continue-guest', () => {
     socket.emit('start-game');
+    // console.log('before',room10.sockets.adapter.rooms.get('room1').size);
     socket.join('room1');
+    roomCount[1]++;
     setTimeout(() => {
-      socket.emit('game1');
+      socket.emit('game1', roomCount[1]);
+
     }, 5500);
   })
 
@@ -68,7 +73,9 @@ room10.on('connection', (socket) => {
     console.log('answer1:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
       socket.leave('room1');
+      roomCount[1]--;
       socket.join('room2');
+      roomCount[2]++;
       socket.emit('game2');
     } else {
       console.log('retake block')
@@ -80,6 +87,7 @@ room10.on('connection', (socket) => {
     if (answer === correctAnswer) {
       socket.leave('room2');
       socket.join('room3');
+      roomCount[3]++;
       socket.emit('game3');
     } else {
       socket.emit('game2-retake');
@@ -158,6 +166,7 @@ room10.on('connection', (socket) => {
   socket.on('answer10', (answer, correctAnswer) => {
     console.log('answer10:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
+
       socket.leave('room10');
       socket.join('champions');
       socket.emit('winner');
