@@ -2,16 +2,23 @@
 
 require('dotenv').config();
 const game1 = require('./games/game1');
-const game6 = require('./games/game6');
+const game2 = require('./games/game2');
+const game3 = require('./games/game3');
 const game4 = require('./games/game4');
-const PORT = process.env.PORT || 3006;
+const game5 = require('./games/game5');
+const game6 = require('./games/game6');
+const game7 = require('./games/game7');
+const PORT = 3006;
+
+
 const { io } = require('socket.io-client');
 const socket = io(`http://localhost:${PORT}/room10`);
 const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const chalkAnimation = require('chalk-animation');
-console.log(process.env.PORT);
+
+
 
 
 
@@ -29,44 +36,31 @@ socket.on('start-game', async (user) => {
   console.log(`Get ready to begin ${verifiedUser.username}`);
   setInterval(advanceTimer, 1000);
 });
-socket.on('game1', () => game4(socket) );
-socket.on('game1-retake', () => game4(socket));
-socket.on('game2', () => {
-  multipleChoice(2);
-});
-socket.on('game2-retake', () => {
-  multipleChoice(2);
-});
-socket.on('game3', () => {
-  multipleChoice(3);
-});
-socket.on('game3-retake', () => {
-  multipleChoice(3);
-});
-socket.on('game4', () => {
-  multipleChoice(4);
-});
-socket.on('game4-retake', () => {
-  multipleChoice(4);
-});
-socket.on('game5', () => {
-  multipleChoice(5);
-});
-socket.on('game5-retake', () => {
-  multipleChoice(5);
-});
+
+
+socket.on('game1', () => game1(socket) );
+socket.on('game1-retake', () => game1(socket));
+socket.on('game2', () => game2(socket));
+socket.on('game2-retake', () => game2(socket));
+
+socket.on('game3', () => game3(socket));
+socket.on('game3-retake', () => game3(socket));
+
+socket.on('game4', () => game4(socket));
+socket.on('game4-retake', () => game4(socket));
+
+socket.on('game5', () => game5(socket));
+socket.on('game5-retake', () => game5(socket));
+
 socket.on('game6', () => {
   multipleChoice(6);
 });
 socket.on('game6-retake', () => {
   multipleChoice(6);
 });
-socket.on('game7', () => {
-  multipleChoice(7);
-});
-socket.on('game7-retake', () => {
-  multipleChoice(7);
-});
+socket.on('game7', () => game7(socket));
+socket.on('game7-retake', () => game7(socket));
+
 socket.on('game8', () => {
   multipleChoice(8);
 });
@@ -90,25 +84,34 @@ socket.on('winner', () => {
 })
 
 async function mainMenu() {
-  let { haveAccount } = await prompt({
-    type: 'input',
-    name: 'haveAccount',
-    message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.'
-  })
+  console.clear();
+  figlet(`Room 10`, (err, data) => {
+    console.log(chalk.greenBright(data)) 
+});
 
-  if (haveAccount === '1') {
-    let credentials = await getCredentials();
-    socket.emit('login', credentials);
-  } else if (haveAccount === '2') {
-    let credentials = await getCredentials();
-    socket.emit('create-account', credentials);
-  } else if (haveAccount === '3') {
-    console.log('Continuing as guest');
-    socket.emit('continue-guest');
-  } else {
-    mainMenu();
-  }
+  setTimeout(async () => {
+    
+    let { haveAccount } = await prompt({
+      type: 'input',
+      name: 'haveAccount',
+      message: 'Press 1 if you want to sign into an existing account.\n  Press 2 if you want to create an account.\n  Press 3 if you want to continue as a guest.\n\n\n',
+    });
+  
+    if (haveAccount === '1') {
+      let credentials = await getCredentials();
+      socket.emit('login', credentials);
+    } else if (haveAccount === '2') {
+      let credentials = await getCredentials();
+      socket.emit('create-account', credentials);
+    } else if (haveAccount === '3') {
+      console.log('Continuing as guest');
+      socket.emit('continue-guest');
+    } else {
+      mainMenu();
+    }
+  }, 2000);
 }
+
 
 async function getCredentials() {
   let { username } = await prompt({
@@ -131,7 +134,10 @@ async function getCredentials() {
 function advanceTimer() {
   if (timer > 0) {
     console.clear();
-    console.log(timer);
+    figlet(`${timer}`, (err, data) => {
+      console.log(chalk.yellow(data))
+  });
+    // console.log(timer);
   }
   timer -= 1;
 }

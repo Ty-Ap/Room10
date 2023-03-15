@@ -2,62 +2,67 @@
 
 const { prompt } = require('enquirer');
 require('dotenv').config();
-const PORT = 3006;
+
+const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
-// const socket = io(`http://localhost:${PORT}/room10`);
+// const socket = io(`http://localhost:${PORT}/room60`);
 const figlet = require('figlet');
-const chalk = require('chalk');
+const chalkAnimation = require('chalk-animation');
+const Chance = require('chance');
+const chance = new Chance();
+let answer = null;
+let alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
-const suits = ['Hearts', 'Clubs', 'Spades', 'Diamonds'];
-const cards = ['Ace', 'King', 'Queen', 'Jack', '10', '9', '8', '7', '6', '5', '4', '3', '2'];
-const tens = ['King', 'Queen', 'Jack', '10',];
-let deck = [];
-let dealerHand = [];
-let playerHand = [];
-let dealerScore = 0;
-let playerScore = 0;
-let playersTurn = true;
-let gameOver = null;
-let winner = null;
-
-class Card {
-  constructor(card, value, suit) {
-    this.card = card;
-    this.value = value;
-    this.suit = suit
-  }
-}
-buildDeck();
-
-function game4(socket) {
+async function game4(socket) {
   console.clear();
   figlet(`Welcome to Room 4`, (err, data) => {
-    console.log(chalk.red(data));
-  });
-
+    console.log(chalkAnimation.neon(data).render()) 
+});
   setTimeout(async () => {
-    buildHands();
-  while (playersTurn) {
-   await playersChoice(socket);
-  }
-  while (!gameOver) {
-    await dealersChoice(socket);
-  }
+    let word = chance.state({full: true}).toLowerCase();
+    let hangedWord = '';
+    let lives = 5;
 
-  if (gameOver) {
-    if (!winner) {
-      setTimeout(() => {
-        reset();
-        game4(socket);
-      }, 2000);
+    for (let letter of word) {
+      if (letter === ' ') {
+        hangedWord += ' '
+      }else {
+        hangedWord += '_'
+
+      }
     }
+    while(word !== hangedWord){
+      let newhangedWord = await guessLetter(word, hangedWord, lives);
+      if (newhangedWord === hangedWord) {lives--;}
+      hangedWord = newhangedWord
+      
+      if (lives < 1) {
+        console.log('Sorry but you\'re out of lives. Try again with a new word');
+        lives = 5
+        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        word = chance.state({full: true}).toLowerCase();
+        hangedWord = '';
+        for (let letter of word) {
+          if (letter === ' ') {
+            hangedWord += ' '
+          }else {
+            hangedWord += '_'
+    
+          }
+        }
+      }
+    }
+    let correctAnswer = 'a'
+    console.log('You got it! Get ready for the next room!')
 
-  }
-  }, 250);
-  
+    setTimeout(() => {
+      socket.emit('answer4', word, hangedWord);
+    }, 1000);
+
+
+  }, 100);  
+
 }
-
-
 
 
 
@@ -65,163 +70,27 @@ function game4(socket) {
 module.exports = game4;
 
 
-function addCard(hand) {
-  let random = Math.floor(Math.random() * deck.length)
-  let tempcard = deck[random]
-  deck.splice(random, 1);
-  hand.push(tempcard);
-}
-
-async function blackjackOrBust(socket) {
-  if (playerScore > 21) {
-    for (let card of playerHand) {
-      if (card.card === 'Ace' && card.value === 11) {
-        card.value = 1;
-        playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
-        break;
-      }
-    } if (playerScore > 21) loseGame();
-  } else if (playerScore === 21 && playerHand.length === 2) {
-    console.log('BLACKJACK!');
-    playersTurn = false;
-    gameOver = true
-    winGame(socket);
-  } else if (playerScore === 21) {
-    console.log('21! Now let\'s see if the dealer can match');
-    playersTurn = false;
-  }
-}
-
-function buildDeck() {
-  deck = [];
-  for (let card of cards) {
-    for (let suit of suits) {
-      if (tens.includes(card)) {
-        let tempCard = new Card(card, 10, suit)
-        deck.push(tempCard)
-      } else if (card === 'Ace') {
-        let tempCard = new Card(card, 11, suit);
-        deck.push(tempCard);
-      } else {
-        let tempCard = new Card(card, +card, suit);
-        deck.push(tempCard)
-      }
-    }
-  }
-}
-
-
-function buildHands() {
-  for (let i = 0; i < 2; i++){
-    addCard(playerHand);
-  }
-  for (let i = 0; i < 2; i++){
-    addCard(dealerHand);
-  }
-}
-
-async function dealersChoice(socket) {
-  gameStateDealer();
-  if (dealerScore === 21) loseGame();;
-  if (dealerScore === playerScore) loseGame();
-  if (dealerScore > playerScore && dealerScore < 22) loseGame();;
-  if (dealerScore > 21) {
-    gameOver = true;
-    winGame(socket);
-  }
-  if (dealerScore < playerScore) {
-    console.log('Dealer needs to hit')
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    addCard(dealerHand);
-  }
-
-}
-
-
-function gameStatePlayer() {
-  dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
-  playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
-  if (playerScore > 21) {
-    for (let card of playerHand) {
-      if (card.card === 'Ace' && card.value === 11) {
-        card.value = 1;
-        console.log('Ace value drops from 11 to 1 to avoid a bust')
-        playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
-        break;
-      }
-    }
-  }
-  console.log(`The Dealer is showing one card - ${dealerHand[0].card} of ${dealerHand[0].suit} (Total: ${dealerHand[0].value})`)
-  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
-}
-
-function gameStateDealer() {
-  dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
-  playerScore = playerHand.reduce((acc, val) => acc + val.value, 0);
-  if (dealerScore > 21) {
-    for (let card of dealerHand) {
-      if (card.card === 'Ace' && card.value === 11) {
-        card.value = 1;
-        console.log('Ace value drops from 11 to 1 to avoid a bust')
-        dealerScore = dealerHand.reduce((acc, val) => acc + val.value, 0);
-        break;
-      }
-    }
-  }
-  console.log(`The Dealer\'s hand is ${dealerHand.map(card => card.card)} (Total: ${dealerScore})`)
-  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
-}
-
-async function playersChoice(socket) {
-  gameStatePlayer();
-  blackjackOrBust(socket);
-  if (playersTurn) {
-    let { hitOrStand } = await prompt({
-      type: 'Select',
-      name: 'hitOrStand',
-      message: `Your score is ${playerScore}. Would you like to hit (take another card), or stand (see the dealer's cards)`,
-      choices: ['Hit Me', 'Stand']
-    })
-    if (hitOrStand === 'Hit Me') {
-      let random = Math.floor(Math.random() * deck.length)
-      let tempcard = deck[random]
-      deck.splice(random, 1);
-      playerHand.push(tempcard);
-    } else {
-      playersTurn = false;
-    } 
-  }
-}
-
-
-function reset() {
-  buildDeck();
-  playerHand = [];
-  playerScore = 0;
-  dealerHand = [];
-  dealerScore = 0;
-  playersTurn = true;
-  gameOver = false;
-  // buildHands();
-}
-
-async function winGame(socket) {
-  winner = true
-  console.log('Congratulations, you won!')
-  let { hasWon } = await prompt({
-    type: 'Select',
-    name: 'hasWon',
-    message: 'Press Enter when you\'re ready to advance',
-    choices: ['Ready']
+async function guessLetter(word, hangedWord, lives) {
+  let hangedArray = hangedWord.split('');
+  answer = await prompt({
+    type: 'select',
+    name: 'answer',
+    message: `You have ${lives} remaining. Guess one letter in this word - ${hangedWord}.`,
+    choices: alphabet.split('')
   })
-  if (hasWon) {
-    socket.emit('answer1', 'winner', 'winner');
-  }
+
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === answer.answer) {
+      hangedArray[i] = answer.answer
+    }
+  } 
+  let removalIndex = alphabet.indexOf(answer.answer);
+  let newAlphabet = alphabet.split('');
+  newAlphabet.splice(removalIndex, 1);
+  alphabet = newAlphabet.join('')
+  return hangedArray.join('');
+
 }
 
-function loseGame() {
-  console.log('Sorry you lose');
-  console.log('Please try again');
-  playersTurn = false;
-  gameOver = true
-}
+
+module.exports = game4;
