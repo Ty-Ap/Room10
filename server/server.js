@@ -9,6 +9,12 @@ const { userModel } = require('../auth/index');
 const bcrypt = require('bcrypt');
 syncDatabase();
 
+let roomCount= [0,0,0,0,0,0,0,0,0,0,0];
+const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,
+  {username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24)},
+  {username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24)}
+];
+
 room10.on('connection', (socket) => {
 
   console.log('Connected to socket #', socket.id);
@@ -22,6 +28,7 @@ room10.on('connection', (socket) => {
       let user = await userModel.findOne({where: {
         username: credentials.username
       }})
+      console.log(user, hashedPassword)
       if (user.password === hashedPassword) {
         console.log('Success, emit game start')
       }
@@ -40,7 +47,7 @@ room10.on('connection', (socket) => {
         password: hashedPassword
       })
       console.log(newUser);
-      socket.emit('start-game', user);
+      socket.emit('start-game', newUser);
       setTimeout(() => {
         socket.join('room1');
         console.log(socket.id, 'has joined room1');
@@ -57,9 +64,12 @@ room10.on('connection', (socket) => {
 
   socket.on('continue-guest', () => {
     socket.emit('start-game');
+    // console.log('before',room10.sockets.adapter.rooms.get('room1').size);
     socket.join('room1');
+    roomCount[1]++;
     setTimeout(() => {
-      socket.emit('game1');
+      socket.emit('game1', roomCount[1]);
+
     }, 5500);
   })
 
@@ -68,7 +78,9 @@ room10.on('connection', (socket) => {
     console.log('answer1:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
       socket.leave('room1');
+      roomCount[1]--;
       socket.join('room2');
+      roomCount[2]++;
       socket.emit('game2');
     } else {
       console.log('retake block')
@@ -80,6 +92,7 @@ room10.on('connection', (socket) => {
     if (answer === correctAnswer) {
       socket.leave('room2');
       socket.join('room3');
+      roomCount[3]++;
       socket.emit('game3');
     } else {
       socket.emit('game2-retake');
@@ -158,6 +171,7 @@ room10.on('connection', (socket) => {
   socket.on('answer10', (answer, correctAnswer) => {
     console.log('answer10:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
+
       socket.leave('room10');
       socket.join('champions');
       socket.emit('winner');
@@ -166,6 +180,25 @@ room10.on('connection', (socket) => {
     }
   })
 
+  socket.on('get-messages', () => {
+    socket.emit('send-messages', messageQueue)
+  });
+
+  socket.on('room-message-client', (chat, verifiedUser) => {
+    console.log('received', chat, verifiedUser)
+    messageQueue.shift();
+    let messageObject = {
+      username: verifiedUser.username,
+      message: chat,
+      timeStamp: Date().slice(16, 24)
+    }
+    messageQueue.push(messageObject);
+    console.log(messageQueue[messageQueue.length - 1]);
+
+
+    // socket.emit('room-message-server', messageQueue[messageQueue.length - 1])
+    room10.to('room10').emit('room-message-server', messageQueue[messageQueue.length - 1])
+  })
 
 })
 

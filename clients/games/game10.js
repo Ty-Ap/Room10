@@ -9,51 +9,34 @@ const figlet = require('figlet');
 const chalkAnimation = require('chalk-animation');
 const Chance = require('chance');
 const chance = new Chance();
-let answer = null;
-let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+let awaitingPrompt = false
 
 
 
 
 
-async function game10(socket) {
+async function game10(socket, verifiedUser) {
   console.clear();
   figlet(`Welcome to Room 10`, (err, data) => {
     console.log(chalkAnimation.neon(data).render()) 
 });
   setTimeout(async () => {
-    let word = chance.state({full: true}).toLowerCase();
-    let hangedWord = '';
-    let lives = 1
-
-    for (let letter of word) {
-      if (letter === ' ') {
-        hangedWord += ' '
-      }else {
-        hangedWord += '_'
-
+    socket.emit('get-messages');
+    socket.on('send-messages', (messageQueue) => {
+      for (let message of messageQueue) {
+        console.log(`${message.timeStamp} - ${message.username}: ${message.message}`)
       }
-    }
-    while(word !== hangedWord){
-      hangedWord = await guessLetter(word, hangedWord, lives);
-      lives--;
-      if (lives < 1) {
-        console.log('Sorry but you\'re out of lives. Try again with a new word');
-        lives = 5
-        alphabet = 'abcdefghijklmnopqrstuvwxyz'
-        word = chance.state({full: true}).toLowerCase();
-        hangedWord = '';
-        for (let letter of word) {
-          hangedWord += '_';
-        }
+    });
+    socket.on('room-message-server', (messageObject) => {
+      console.log(`${messageObject.timeStamp} - ${messageObject.username}: ${messageObject.message}`)
+      if (!awaitingPrompt) {
+        chatLoop(socket, verifiedUser);
       }
-    }
-    let correctAnswer = 'a'
-    console.log('You got it! Get ready for the next room!')
+    });
 
-    setTimeout(() => {
-      socket.emit('answer10', word, hangedWord);
-    }, 1000);
+    setTimeout( async () => {
+      await chatLoop(socket, verifiedUser);
+    }, 200);
 
 
   }, 100);
@@ -65,27 +48,17 @@ async function game10(socket) {
 module.exports = game10;
 
 
-async function guessLetter(word, hangedWord, lives) {
-  let hangedArray = hangedWord.split('');
-  answer = await prompt({
-    type: 'select',
-    name: 'answer',
-    message: `You have ${lives} remaining. Guess one letter in this word - ${hangedWord}.`,
-    choices: alphabet.split('')
+async function chatLoop(socket, verifiedUser) {
+  awaitingPrompt = true
+  let { chat } = await prompt({
+    type: 'input',
+    name: 'chat',
+    message: '>'
   })
 
-  for (let i = 0; i < word.length; i++) {
-    if (word[i] === answer.answer) {
-      hangedArray[i] = answer.answer
-    }
-  } 
-  let removalIndex = alphabet.indexOf(answer.answer);
-  let newAlphabet = alphabet.split('');
-  newAlphabet.splice(removalIndex, 1);
-  alphabet = newAlphabet.join('')
-  return hangedArray.join('');
 
+  if (chat) {
+    awaitingPrompt = false
+    socket.emit('room-message-client', chat, verifiedUser);
+  }
 }
-
-
-module.exports = game10;

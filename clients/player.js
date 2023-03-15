@@ -10,6 +10,7 @@ const game6 = require('./games/game6');
 const game7 = require('./games/game7');
 const game8 = require('./games/game8');
 const game9 = require('./games/game9');
+const game10 = require('./games/game10');
 const PORT = 3006;
 
 
@@ -19,13 +20,14 @@ const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const chalkAnimation = require('chalk-animation');
-
+const Chance = require('chance');
+const chance = new Chance();
 
 
 
 
 let timer = 5;
-let verifiedUser = {username: 'guest'};
+let verifiedUser = {username: chance.name() + ' (Guest)' };
 
 
 
@@ -40,7 +42,7 @@ socket.on('start-game', async (user) => {
 });
 
 
-socket.on('game1', () => game1(socket) );
+socket.on('game1', (roomCount) => game1(socket, roomCount) );
 socket.on('game1-retake', () => game1(socket));
 socket.on('game2', () => game2(socket));
 socket.on('game2-retake', () => game2(socket));
@@ -66,12 +68,10 @@ socket.on('game8-retake', () => game8(socket));
 socket.on('game9', () => game9(socket));
 socket.on('game9-retake', () => game9(socket));
 
-socket.on('game10', () => {
-  multipleChoice(10);
-});
-socket.on('game10-retake', () => {
-  multipleChoice(10);
-});
+socket.on('game10', () => game10(socket, verifiedUser));
+socket.on('game10-retake', () => game10(socket, verifiedUser));
+
+
 socket.on('winner', () => {
   console.log('NEVER GONNA GIVE YOU UP');
 })
@@ -104,7 +104,6 @@ async function mainMenu() {
     }
   }, 2000);
 }
-
 
 async function getCredentials() {
   let { username } = await prompt({
