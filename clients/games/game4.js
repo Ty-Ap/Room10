@@ -2,6 +2,7 @@
 
 const { prompt } = require('enquirer');
 require('dotenv').config();
+
 const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
 // const socket = io(`http://localhost:${PORT}/room60`);
@@ -11,10 +12,6 @@ const Chance = require('chance');
 const chance = new Chance();
 let answer = null;
 let alphabet = 'abcdefghijklmnopqrstuvwxyz';
-
-
-
-
 
 async function game4(socket) {
   console.clear();
@@ -66,6 +63,7 @@ async function game4(socket) {
   }, 100);  
 
 }
+
 
 
 
