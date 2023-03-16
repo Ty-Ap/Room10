@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 const { Server } = require('socket.io');
-const PORT =  3006;
+const PORT = process.env.PORT || 3006;
 const server = new Server();
 const room10 = server.of('/room10');
 const { userModel } = require('../auth/index');
