@@ -255,7 +255,7 @@ async function syncDatabase() {
   }
 }
 
-async function getLeaders()
+async function getLeaders() {
   try {
     let allUsers = await userModel.findAll();
     
