@@ -1,7 +1,7 @@
 'use strict';
 
 const userSchema = (sequelizeDatabase, DataTypes) => {
-  return sequelizeDatabase.define('users', {
+  return sequelizeDatabase.define('prisoners', {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
