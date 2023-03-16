@@ -15,18 +15,25 @@ let awaitingPrompt = false
 
 
 
-async function game10(socket, verifiedUser) {
+async function game10(socket, verifiedUser, leaderboard) {
   console.clear();
   figlet(`Welcome to Room 10`, (err, data) => {
-    console.log(chalk.yellow(data)) 
-});
-if(verifiedUser.bestScore) console.log('\n\n\n', verifiedUser.bestScore);
+    console.log(chalk.yellow(data))
+  });
+  if(leaderboard.length > 0) {
+    for (let i = 0; i < leaderboard.length; i++) {
+      console.log(`${i + 1}. ${leaderboard[i].username}'s best time is ${leaderboard[i].bestScore} seconds`)
+    }
+  }
+  if (verifiedUser.bestScore) console.log('\n\n\n', verifiedUser.bestScore);
 
   setTimeout(async () => {
     socket.emit('get-messages');
     socket.on('send-messages', (messageQueue) => {
       for (let message of messageQueue) {
-        console.log(`${message.timeStamp} - ${message.username}: ${message.message}`)
+        if (message.message) {
+          console.log(`${message.timeStamp} - ${message.username}: ${message.message}`)
+        }
       }
     });
     socket.on('room-message-server', (messageObject) => {
@@ -36,7 +43,7 @@ if(verifiedUser.bestScore) console.log('\n\n\n', verifiedUser.bestScore);
       }
     });
 
-    setTimeout( async () => {
+    setTimeout(async () => {
       await chatLoop(socket, verifiedUser);
     }, 200);
 
