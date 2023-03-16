@@ -79,7 +79,7 @@ room10.on('connection', (socket) => {
     setTimeout(() => {
       socket.emit('game1', roomCount[1]);
 
-    }, 7500);
+    }, 10500);
   })
 
 
