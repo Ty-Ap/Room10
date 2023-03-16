@@ -2,23 +2,26 @@
 
 require('dotenv').config();
 const { Server } = require('socket.io');
-const PORT =  3006;
+const PORT = 3006;
 const server = new Server();
 const room10 = server.of('/room10');
 const { userModel } = require('../auth/index');
 const bcrypt = require('bcrypt');
 syncDatabase();
 
-let roomCount= [0,0,0,0,0,0,0,0,0,0,0];
+let roomCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let leaderboard = [];
 const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,
-  {username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24)},
-  {username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24)}
+  { username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24) },
+  { username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24) }
 ];
 
-room10.on('connection',  async (socket) => {
-
-  leaderboard = await getLeaders();
+room10.on('connection', async (socket) => {
+  try {
+    leaderboard = await getLeaders();
+  } catch (error) {
+    console.log(error)
+  }
 
   console.log('Connected to socket #', socket.id);
 
@@ -26,12 +29,19 @@ room10.on('connection',  async (socket) => {
 
 
   socket.on('login', async (credentials) => {
-    let hashedPassword = await bcrypt.hash(credentials.password, 5);
-    console.log(credentials.password, hashedPassword);
     try {
-      let user = await userModel.findOne({where: {
-        username: credentials.username
-      }})
+      let hashedPassword = await bcrypt.hash(credentials.password, 5);
+      console.log(credentials.password, hashedPassword);
+
+    } catch (error) {
+      console.log(error)
+    }
+    try {
+      let user = await userModel.findOne({
+        where: {
+          username: credentials.username
+        }
+      })
       // console.log(user, hashedPassword)
       if (bcrypt.compare(credentials.password, user.password)) {
         console.log('Success, emit game start')
@@ -40,7 +50,7 @@ room10.on('connection',  async (socket) => {
           socket.emit('game1', roomCount[1])
         }, 10500);
       } else {
-        socket.emit('main-menu', 'Incorrect Password, please try again.\n' )
+        socket.emit('main-menu', 'Incorrect Password, please try again.\n')
       }
 
 
@@ -50,7 +60,7 @@ room10.on('connection',  async (socket) => {
     }
   })
   socket.on('create-account', async (credentials) => {
-    
+
     try {
       let hashedPassword = await bcrypt.hash(credentials.password, 5);
       console.log(credentials.password, hashedPassword);
@@ -71,7 +81,7 @@ room10.on('connection',  async (socket) => {
       socket.emit('main-menu');
     }
 
-    
+
   })
 
   socket.on('continue-guest', () => {
@@ -214,10 +224,14 @@ room10.on('connection',  async (socket) => {
   })
 
   socket.on('update-score', async (user) => {
-    let dbUser = await userModel.findOne({where: {username: user.username}});
-    dbUser.update(user);
-    leaderboard = await getLeaders();
-    console.log(leaderboard);
+    try {
+      let dbUser = await userModel.findOne({ where: { username: user.username } });
+      dbUser.update(user);
+      leaderboard = await getLeaders();
+      console.log(leaderboard);
+    } catch (error) {
+      console.log(error)
+    }
   })
 
 })
@@ -232,14 +246,26 @@ listen();
 
 
 async function syncDatabase() {
-  await userModel.sync();
+  try {
+    await userModel.sync();
+    
+  } catch (error) {
+  console.log(error)
+    
+  }
 }
 
-async function getLeaders() {
-  let allUsers = await userModel.findAll();
+async function getLeaders()
+  try {
+    let allUsers = await userModel.findAll();
+    
+  } catch (error) {
+  console.log(error)
+    
+  }
   // console.log(allUsers);
   const groomedUsers = allUsers.map(user => {
-    return {username: user.username, bestScore: user.bestScore}
+    return { username: user.username, bestScore: user.bestScore }
   })
   const leadersArray = groomedUsers.sort((a, b) => a.bestScore - b.bestScore);
   return leadersArray;

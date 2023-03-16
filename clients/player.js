@@ -15,7 +15,7 @@ const PORT = 3006;
 
 
 const { io } = require('socket.io-client');
-const socket = io(`http://localhost:${PORT}/room10`);
+const socket = io(`https://room-10.onrender.com`);
 const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
