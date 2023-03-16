@@ -131,7 +131,7 @@ async function dealersChoice(socket) {
   }
   if (dealerScore < playerScore) {
     console.log('Dealer needs to hit')
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     addCard(dealerHand);
   }
 
@@ -151,8 +151,8 @@ function gameStatePlayer() {
       }
     }
   }
-  console.log(`The Dealer is showing one card - ${dealerHand[0].card} of ${dealerHand[0].suit} (Total: ${dealerHand[0].value})`)
-  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
+  console.log(`\nThe Dealer is showing one card - ${dealerHand[0].card} of ${dealerHand[0].suit} (Total: ${dealerHand[0].value})`)
+  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})\n`);
 }
 
 function gameStateDealer() {
@@ -168,8 +168,8 @@ function gameStateDealer() {
       }
     }
   }
-  console.log(`The Dealer\'s hand is ${dealerHand.map(card => card.card)} (Total: ${dealerScore})`)
-  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})`);
+  console.log(`\nThe Dealer\'s hand is ${dealerHand.map(card => card.card)} (Total: ${dealerScore})`)
+  console.log(`Your hand is ${playerHand.map(card => card.card)} (Total: ${playerScore})\n`);
 }
 
 async function playersChoice(socket) {
@@ -183,10 +183,7 @@ async function playersChoice(socket) {
       choices: ['Hit Me', 'Stand']
     })
     if (hitOrStand === 'Hit Me') {
-      let random = Math.floor(Math.random() * deck.length)
-      let tempcard = deck[random]
-      deck.splice(random, 1);
-      playerHand.push(tempcard);
+      addCard(playerHand)
     } else {
       playersTurn = false;
     } 
@@ -211,7 +208,7 @@ async function winGame(socket) {
   let { hasWon } = await prompt({
     type: 'Select',
     name: 'hasWon',
-    message: 'Press Enter when you\'re ready to advance',
+    message: '\n\nPress Enter when you\'re ready to advance',
     choices: ['Ready']
   })
   if (hasWon) {
