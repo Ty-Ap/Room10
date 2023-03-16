@@ -86,9 +86,11 @@ async function guessLetter(word, hangedWord, lives) {
     answer = await prompt({
       type: 'input',
       name: 'answer',
-      message: `You have ${lives} remaining. Guess one letter in this word - ${hangedWord}.`,
+      message: `You have ${lives} lives remaining. Guess one letter in this word - ${hangedWord}.`,
     })  
   }
+
+  answer.answer = answer.answer.toLowerCase();
 
   chosenArray.push(answer.answer);
 

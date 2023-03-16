@@ -24,6 +24,7 @@ async function game10(socket, verifiedUser, leaderboard) {
     for (let i = 0; i < leaderboard.length; i++) {
       console.log(`${i + 1}. ${leaderboard[i].username}'s best time is ${leaderboard[i].bestScore} seconds`)
     }
+    console.log('\n');
   }
   if (verifiedUser.bestScore) console.log('\n\n\n', verifiedUser.bestScore);
 
