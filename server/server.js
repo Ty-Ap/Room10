@@ -25,7 +25,9 @@ room10.on('connection', async (socket) => {
 
   console.log('Connected to socket #', socket.id);
 
-  socket.emit('main-menu')
+  socket.on('ready', () => {
+    socket.emit('main-menu')
+  })
 
 
   socket.on('login', async (credentials) => {
