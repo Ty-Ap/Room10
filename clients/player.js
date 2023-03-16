@@ -31,7 +31,7 @@ let verifiedUser = {username: chance.name() + ' (Guest)', isGuest: true};
 
 
 
-
+socket.emit('ready');
 socket.on('main-menu', mainMenu);
 socket.on('start-game', async (user) => {
   if (user) {
