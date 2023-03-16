@@ -16,12 +16,13 @@ async function game7(socket) {
 });
  
   let gameOptions = ['rock', 'paper', 'scissors']
-  let opponent = gameOptions[Math.floor(Math.random() * (gameOptions.length))];
+  let opponent = gameOptions[Math.floor(Math.random() * (gameOptions.length))];//+1
   let correctAnswer = true;
  
 
   let insultArr = ["Looks like you're all thumbs today!","Better stick to tic-tac-toe!","I heard you're a pro at coin flipping.","Are you playing blindfolded? I can't tell!","I thought this was a rock-paper-scissors competition, not a paper-scissors-paper competition!","You're making it too easy for me!","You might as well give up now!","I bet you're regretting your choice already.","I don't even need to look at my hand to beat you!","Is it opposite day? Because you're throwing all the wrong moves!"
 ]
+
   
 let insult = insultArr[Math.floor(Math.random() * (insultArr.length))];
 
