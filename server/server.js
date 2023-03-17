@@ -264,3 +264,5 @@ async function getLeaders() {
     console.log(error)
   }
 }
+
+module.exports = { syncDatabase, getLeaders, server }

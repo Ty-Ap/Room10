@@ -13,6 +13,7 @@
   "author": "Ty Aponte Tyler Bennett Jordan Covington Yen Xiong Yuan",
   "license": "ISC",
   "dependencies": {
+    "assert": "^2.0.0",
     "base-64": "^1.0.0",
     "bcrypt": "^5.1.0",
     "chalk": "^4.1.2",

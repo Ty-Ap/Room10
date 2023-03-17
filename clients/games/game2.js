@@ -28,7 +28,7 @@ let { answer } = await prompt({
   message: `Find the following word by rearranging the letters:   ${scramble}\n\n\n\n`
 })
 answer = answer.toLowerCase();
-socket.emit('answer2', answer, correctAnswer)
+socket.emit('answer9', answer, correctAnswer)
 
 }
 

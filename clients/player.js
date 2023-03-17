@@ -52,8 +52,8 @@ socket.on('start-game', async (user) => {
 });
 
 
-socket.on('game1', (roomCount) => game1(socket, roomCount) );
-socket.on('game1-retake', () => game1(socket));
+socket.on('game1', (roomCount) => game2(socket, roomCount) );
+socket.on('game1-retake', () => game2(socket));
 socket.on('game2', () => game2(socket));
 socket.on('game2-retake', () => game2(socket));
 
