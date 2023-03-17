@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3006;
 
 
 const { io } = require('socket.io-client');
-const socket = io(`http://localhost:${PORT}/room10`);
+const socket = io(`https://room-10-practice.onrender.com/room10`);
 const { prompt } = require('enquirer');
 const figlet = require('figlet');
 const chalk = require('chalk');
@@ -31,7 +31,7 @@ let verifiedUser = {username: chance.name() + ' (Guest)', isGuest: true};
 
 
 
-
+socket.emit('ready');
 socket.on('main-menu', mainMenu);
 socket.on('start-game', async (user) => {
   if (user) {

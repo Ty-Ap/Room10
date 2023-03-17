@@ -1,4 +1,4 @@
-# room-10
+# Room-10
 
 ## Project: Room-10 Multiplayer Game
 
@@ -10,27 +10,48 @@ A game that can be played completely in the CLI leveraging WebSocket to enable m
 
 ### Links and Resources
 
+- [Link to Repository](https://github.com/Team-Room-10/room-10/)
+
 - [ci/cd](https://github.com/Team-Room-10/room-10/actions/new)
-<!-- - [back-end server deployed]() -->
+
 - [Project Management Board](https://trello.com/b/KYO7ODfy/development-for-room-10)
+
+- [Deployed Server](https://room-10-practice.onrender.com/)
 
 ![User Stories](./assets/Screenshot%202023-03-10%20175342.png)
 
 ### Setup
 
-#### `.env` requirements (where applicable)
-
 #### How to initialize/run your application (where applicable)
 
-- run npm i in command line
-- cd into server > nodemon server.js into command line
-- cd into clients > type node 'player.js' into command line
+- In terminal type the following:
+  - npm i
+  - npm start  
 
 #### Features / Routes
 
+- Login Screen
+  - Login with Basic Auth
+  - Create a new User
+  - Sign in as Guest
+- Game 1 - Memorization
+- Game 2 - Word Scramble
+- Game 3 - Word Problem
+- Game 4 - Hangman
+- Game 5 - Radar Pain
+- Game 6 - Blackjack
+- Game 7 - Rock, Paper, and Scissors
+- Game 8 - Tic Tac Toe
+- Game 9 - Maze of Doom
+- Game 10 - Chat Room/Leaderboard
+
 #### Tests
 
-- How do you run tests? npm test
+![Test 1 -](./assets/Test.png)
+
+![Test 2 -](./assets/Test2.png)
+
+![Test 3 -](./assets/Test3.png)
 
 #### UML
 
