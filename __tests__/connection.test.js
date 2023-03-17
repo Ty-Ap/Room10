@@ -39,7 +39,6 @@ describe('Socket', () => {
     // client1.emit('ready');
     client1.on('main-menu', () => {
       done();
-      // assert.equal(data.message, 'test message');
     },);
   });
 
@@ -50,8 +49,6 @@ describe('Socket', () => {
       expect(data.bestScore).toBe(null);
       expect(data.username).toBe('testuser');
       done();
-      // assert.equal(data.username, user.username);
-      // assert.equal(data.password, undefined);
     });
   });
 });
