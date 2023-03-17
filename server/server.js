@@ -14,6 +14,9 @@ let leaderboard = [];
 const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,];
 
 room10.on('connection', async (socket) => {
+
+  socket.join('room10');
+
   try {
     leaderboard = await getLeaders();
   } catch (error) {
@@ -183,24 +186,25 @@ room10.on('connection', async (socket) => {
     console.log('answer9:', answer, 'Correct:', correctAnswer)
     if (answer === correctAnswer) {
       socket.leave('room9');
-      socket.join('room10');
+      // socket.join('room10');
       console.log(leaderboard)
       socket.emit('game10', leaderboard);
     } else {
       socket.emit('game9-retake');
     }
   })
-  socket.on('answer10', (answer, correctAnswer) => {
-    console.log('answer10:', answer, 'Correct:', correctAnswer)
-    if (answer === correctAnswer) {
 
-      socket.leave('room10');
-      socket.join('champions');
-      socket.emit('winner');
-    } else {
-      socket.emit('game10-retake');
-    }
-  })
+  // socket.on('answer10', (answer, correctAnswer) => {
+  //   console.log('answer10:', answer, 'Correct:', correctAnswer)
+  //   if (answer === correctAnswer) {
+
+  //     socket.leave('room10');
+  //     socket.join('champions');
+  //     socket.emit('winner');
+  //   } else {
+  //     socket.emit('game10-retake');
+  //   }
+  // })
 
   socket.on('get-messages', () => {
     socket.emit('send-messages', messageQueue)
