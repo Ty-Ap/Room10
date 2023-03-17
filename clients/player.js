@@ -11,7 +11,7 @@ const game7 = require('./games/game7');
 const game8 = require('./games/game8');
 const game9 = require('./games/game9');
 const game10 = require('./games/game10');
-const PORT = 3006;
+const PORT = process.env.PORT || 3006;
 
 
 const { io } = require('socket.io-client');
