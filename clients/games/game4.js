@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3006;
 const { io } = require('socket.io-client');
 // const socket = io(`http://localhost:${PORT}/room60`);
 const figlet = require('figlet');
-const chalkAnimation = require('chalk-animation');
+const chalk = require('chalk');
 const Chance = require('chance');
 const chance = new Chance();
 
@@ -17,7 +17,7 @@ let chosenArray = [];
 async function game4(socket) {
   console.clear();
   figlet(`Welcome to Room 4`, (err, data) => {
-    console.log(chalkAnimation.neon(data).render()) 
+    console.log(chalk.cyanBright(data)) 
 });
   setTimeout(async () => {
     let word = chance.state({full: true}).toLowerCase();
