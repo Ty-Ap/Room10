@@ -11,10 +11,7 @@ syncDatabase();
 
 let roomCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let leaderboard = [];
-const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,
-  { username: 'admin', message: 'I am an admin, you are banned', timeStamp: Date().slice(16, 24) },
-  { username: 'user', message: 'Good I hate this game anyway', timeStamp: Date().slice(16, 24) }
-];
+const messageQueue = [0, 0, 0, 0, 0, 0, 0, 0,];
 
 room10.on('connection', async (socket) => {
   try {
@@ -250,25 +247,20 @@ listen();
 async function syncDatabase() {
   try {
     await userModel.sync();
-    
   } catch (error) {
-  console.log(error)
-    
+    console.log(error)
   }
 }
 
 async function getLeaders() {
   try {
     let allUsers = await userModel.findAll();
-    
+    const groomedUsers = allUsers.map(user => {
+      return { username: user.username, bestScore: user.bestScore }
+    })
+    const leadersArray = groomedUsers.sort((a, b) => a.bestScore - b.bestScore);
+    return leadersArray;
   } catch (error) {
-  console.log(error)
-    
+    console.log(error)
   }
-  // console.log(allUsers);
-  const groomedUsers = allUsers.map(user => {
-    return { username: user.username, bestScore: user.bestScore }
-  })
-  const leadersArray = groomedUsers.sort((a, b) => a.bestScore - b.bestScore);
-  return leadersArray;
 }
